@@ -20,6 +20,7 @@ ggplot(admin)+geom_sf()
 
 # tks50km
 ## distributed by Envirotech as a part of GIS_Latvia10.2
+## due to limited finadability included in uploads
 
 # Work ----
 
@@ -28,6 +29,9 @@ ggplot(admin)+geom_sf()
 # create centroid points
 # ensure ID fields of any other joinable grid present in 100 m grid
 # create additional 300 m and 500 m grids joinable to 100 m grid
+
+# to ensure longevity, prepare *.gpkg with layers corresponding to *.parquet for storage
+# to ensure replicability, store also *.parquet files used in analysis
 
 # 100 m ----
 
@@ -40,10 +44,14 @@ tikls100_sauszeme=tikls100[adm_ter,,]
 st_write_parquet(tikls100_sauszeme,"./tikls100_sauzeme.parquet")
 
 centri100=st_centroid(tikls100_sauszeme)
-centri100$X=st_coordinates(centri100)[,1]
-centri100$Y=st_coordinates(centri100)[,2]
 st_write_parquet(centri100,"./pts100_sauzeme.parquet")
 
+tks50km=st_read_parquet("./tks93_50km.parquet")
+savienots=st_join(centri100,tks50km)
+savienots=savienots %>% 
+  mutate(tks50km=NUMURS) %>% 
+  dplyr::select(id,yes,tks50km)
+st_write_parquet(savienots,"./pts100_sauzeme.parquet")
 
 # 1000 m ----
 
@@ -63,7 +71,7 @@ tikls100=tikls100 %>%
   left_join(pievienosanai,by="id")
 st_write_parquet(tikls100,"./tikls100_sauzeme.parquet")
 
-tks50km=st_read("./GIS_Latvija10.2.gdb/",layer="satelitkarte_tks93_50000")
+tks50km=st_read_parquet("./tks93_50km.parquet")
 centri1000=st_centroid(tikls1000_sauszeme)
 centri1000=st_join(centri1000,tks50km)
 centri1000=centri1000 %>% 
@@ -82,15 +90,13 @@ st_write_parquet(tikls300_LV,"./tikls300_sauzeme.parquet")
 
 tikls300_LV=st_read_parquet("./tikls300_sauzeme.parquet")
 centri300=st_centroid(tikls300_LV)
-centri300$X=st_coordinates(centri300)[,1]
-centri300$Y=st_coordinates(centri300)[,2]
 st_write_parquet(centri300,"./pts300_sauzeme.parquet")
 
-tks50km=st_read("./GIS_Latvija10.2.gdb/",layer="satelitkarte_tks93_50000")
+tks50km=st_read_parquet("./tks93_50km.parquet")
 centri300=st_join(centri300,tks50km)
 centri300b=centri300 %>% 
   mutate(tks50km=NUMURS) %>% 
-  dplyr::select(rinda300,X,Y,tks50km)
+  dplyr::select(rinda300,tks50km)
 st_write_parquet(centri300b,"./pts300_sauzeme.parquet")
 
 punkti=st_read_parquet("./pts100_sauzeme.parquet")
@@ -112,15 +118,13 @@ sfarrow::st_write_parquet(t500,"./tikls500_sauzeme.parquet")
 
 
 centri500=st_centroid(tikls500)
-centri500$X=st_coordinates(centri500)[,1]
-centri500$Y=st_coordinates(centri500)[,2]
 st_write_parquet(centri500,"./pts500_sauzeme.parquet")
 
-tks50km=st_read("./GIS_Latvija10.2.gdb/",layer="satelitkarte_tks93_50000")
+tks50km=st_read_parquet("./tks93_50km.parquet")
 savienots=st_join(centri500,tks50km)
 savienots=savienots %>% 
   mutate(tks50km=NUMURS) %>% 
-  dplyr::select(rinda500,X,Y,tks50km)
+  dplyr::select(rinda500,tks50km)
 st_write_parquet(savienots,"./pts500_sauzeme.parquet")
 pievienosanai=data.frame(savienots) %>% 
   dplyr::select(rinda500,tks50km)
@@ -137,3 +141,14 @@ pievienosanai=data.frame(savienots) %>%
 tikls100=tikls100 %>% 
   left_join(pievienosanai,by="id")
 st_write_parquet(tikls100,"./tikls100_sauzeme.parquet")
+
+# gpkg ----
+st_write(tikls100,"./vector_grids.gpkg",layer="tikls100_sauzeme")
+st_write(tikls300,"./vector_grids.gpkg",layer="tikls300_sauzeme")
+st_write(tikls500,"./vector_grids.gpkg",layer="tikls500_sauzeme")
+st_write(tikls1000,"./vector_grids.gpkg",layer="tikls1km_sauzeme")
+st_write(centri100,"./vector_grids.gpkg",layer="pts100_sauzeme")
+st_write(centri300,"./vector_grids.gpkg",layer="pts300_sauzeme")
+st_write(centri500,"./vector_grids.gpkg",layer="pts500_sauzeme")
+st_write(centri1000,"./vector_grids.gpkg",layer="pts1000_sauzeme")
+st_write(tks50km,"./vector_grids.gpkg",layer="tks93_50km")
