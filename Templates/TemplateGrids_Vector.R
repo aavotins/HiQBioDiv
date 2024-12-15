@@ -22,7 +22,7 @@ ggplot(admin)+geom_sf()
 ## distributed by Envirotech as a part of GIS_Latvia10.2
 ## due to limited finadability included in uploads
 
-# Work ----
+# Task ----
 
 # filter only those polygons that overlap with administrative borders
 # ensure crs=epsg:3059
