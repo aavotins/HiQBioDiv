@@ -44,7 +44,7 @@ terra::writeRaster(rast_LV,"./LV10m_10km.tif")
 rastrs100=terra::rast(xmin=302800,xmax=772800,ymin=162900,ymax=448900,
                       resolution=100,crs=b)
 # rasterisation of territory of Latvia
-rast_LV100=rasterize(vect(adm_ter),rastrs100)
+rast_LV100=rasterize(vect(adm_ter),rastrs100,touches=TRUE)
 # writing raster file
 terra::writeRaster(rast_LV100,"./LV100m_10km.tif")
 
@@ -52,7 +52,7 @@ terra::writeRaster(rast_LV100,"./LV100m_10km.tif")
 
 rastrs500=terra::rast(xmin=302800,xmax=772800,ymin=162900,ymax=448900,resolution=500,crs=b)
 # rasterisation of territory of Latvia
-rast_LV500=rasterize(vect(adm_ter),rastrs500)
+rast_LV500=rasterize(vect(adm_ter),rastrs500,touches=TRUE)
 # writing raster file
 terra::writeRaster(rast_LV500,"./LV500m_10km.tif")
 
