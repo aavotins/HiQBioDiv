@@ -1,3 +1,5 @@
+dir.create("./Geodata/LAD")
+
 # libs
 if(!require(sf)) {install.packages("sf"); require(sf)}
 if(!require(arrow)) {install.packages("arrow"); require(arrow)}
@@ -37,7 +39,25 @@ dati2 <- ensure_multipolygons(dati)
 # pārbaudes
 dati3 = dati2[!st_is_empty(dati2),,drop=FALSE] # OK
 validity=st_is_valid(dati3) 
-table(validity) # OK
+table(validity) # 13 invalīdi
+
+dati4=st_make_valid(dati3)
+table(st_is_valid(dati4)) # OK
 
 # saglabāšana
-sfarrow::st_write_parquet(dati3, "./Geodata/LAD/LAD_lauki_20250218.parquet")
+sf::st_write(dati4, "./Geodata/LAD/LAD_lauki_20250218_all.gpkg")
+
+rm(dati)
+rm(dati2)
+rm(dati3)
+
+str(dati4)
+head(dati4)
+
+table(dati4$PERIOD_CODE,useNA="always")
+tapply(dati4$DATA_CHANGED_DATE,dati4$PERIOD_CODE,summary)
+
+dati5=dati4 %>% 
+  filter(PERIOD_CODE==2024)
+sfarrow::st_write_parquet(dati5, "./Geodata/LAD/LAD_lauki_20250218_2024.parquet")
+
