@@ -1,2 +1,8 @@
 # HiQBioDiv: High-resolution quantification of biodiversity for conservation and management
 Main code repository of the project "HiQBioDiv: High-resolution quantification of biodiversity for conservation and management" funded by the Latvian Council of Science (Ref. No. VPP-VARAM-DABA-2024/1-0002).
+
+Directory [Templates](./Templates) contains R command lines used to prepare template files for harmonized workflows from preparation of ecogeographical variables (EGVs) to species distribution model (SDM) projections. Templates as georeferenced files are available in our [Zenodo community](https://zenodo.org/communities/hiqbiodiv/records?q=&l=list&p=1&s=10&sort=newest) both as [raster](https://zenodo.org/records/14497070) and [vector](https://zenodo.org/records/14277114) files.
+
+To simplyfy our work and ensuring reproducibility and repeatability preparing EGVs, we created an R package [{egvtools}](https://aavotins.github.io/egvtools/). The package is guaranteed to work with a dedicated [container](https://hub.docker.com/repository/docker/aavotins/hiqbiodiv-container/general) even long after the project ends.
+
+Full description (filetree, utilities, geodata and workflows both as human readable text and R command lines) of EGVs describing Latvia in 2024 is available as [{boodown} document](https://aavotins.github.io/HiQBioDiv_EGVs/). Due to legal resons, we can not distribute geodata used - it is the user's responsibility to acquire them. If geodata will be stored following our file structure (easily recreated from [template repository](https://github.com/aavotins/HiQBioDiv_FileTree)), our workflows will work without modifications.
